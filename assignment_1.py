@@ -28,4 +28,23 @@ def compute_H(points1, poins2):
 
     return H
 
+points1 = [
+    (0, 0),
+    (100, 0),
+    (0, 100),
+    (100, 100)
+]
+
+points2 = [
+    (10, 20),
+    (120, 15),
+    (20, 130),
+    (130, 125)
+]
+
+H = compute_H(points1, points2)
+
+print("H =")
+print(H)
+
     
