@@ -54,4 +54,26 @@ def transform_point(H, x, y):
     y_prime = (H[1,0]*x + H[2,2]*y+H[1,2])/denominator
     return x_prime, y_prime
 
+H_inv=np.linalg.inv(H)
+
+def get_border(H_inv, points1, points2):
     
+    changed_points2 = [transform_point(H_inv, x, y) for (x, y) in points2]
+
+    all_x = [x for (x, y) in points1] + [x for (x, y) in changed_points2]
+    all_y = [y for (x, y) in points2] + [y for (x, y) in changed_points2]
+
+    min_x= int(np.floor(min(all_x)))
+    max_x= int(np.ceil(max(all_x)))
+    min_y= int(np.floor(min(all_y)))
+    max_x= int(np.ceil(max(all_y)))
+
+    out_w = max_x - min_x + 1
+    out=h = max_y - min_y +1
+
+    return min_x, min_y, max_x, max_y, out_w, out_h
+
+min_x, min_y, max_x, max_y, out_w, out_h = get_border(H_inv, points1, points2)
+
+print(min_x, min_y, max_x, max_y)
+print(out_w, out_h)
