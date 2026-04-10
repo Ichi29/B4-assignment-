@@ -47,4 +47,11 @@ H = compute_H(points1, points2)
 print("H =")
 print(H)
 
+
+def transform_point(H, x, y):
+    denominator = H[2,0]*x+H[2,1]*y+H[2,2]
+    x_prime = (H[0,0]*x + H[0,1]*y+H[0,2])/denominator
+    y_prime = (H[1,0]*x + H[2,2]*y+H[1,2])/denominator
+    return x_prime, y_prime
+
     
