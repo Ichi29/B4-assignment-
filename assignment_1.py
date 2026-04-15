@@ -67,9 +67,7 @@ img2 = cv2.imread("image2.jpg")
 if img1 is None:
     raise FileNotFoundError("image1.jpg が読み込めません")
 if img2 is None:
-    raise FileNotFoundError("image2.jpg が読み込めません")#	new file:   IMG_7002.jpeg
-#	new file:   IMG_7003.jpeg
-#	modified:   assignment_1.py
+    raise FileNotFoundError("image2.jpg が読み込めません")
 
 
 points1 = [
