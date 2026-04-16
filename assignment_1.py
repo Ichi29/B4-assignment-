@@ -1,6 +1,5 @@
 import numpy as np
 import cv2
-import numpy as np
 import sys
 
 def build_matrix_A(points1, points2):
