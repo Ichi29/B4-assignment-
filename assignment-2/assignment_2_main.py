@@ -70,7 +70,7 @@ def equirectangular_to_perspective_no_rotation(img, fov_x_deg, fov_y_deg, out_w,
 
 
 if __name__ == "__main__":
-    input_path = "input.jpg"
+    input_path = "IMG_20260422_104136_012.jpg"
     output_path = "perspective_no_rotation.jpg"
 
     img = cv2.imread(input_path)
