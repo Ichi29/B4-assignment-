@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 import math
+import sys
 
 
 def rotation_matrix_from_vectors(a, b):
@@ -134,22 +135,30 @@ def equirectangular_to_perspective_by_vector(
 
 
 if __name__ == "__main__":
-    input_path = "IMG_20260422_104136_012.jpg"
-    output_path = "perspective_by_vector.jpg"
+    # 引数チェック
+    if len(sys.argv) < 5:
+        print("Usage: python script.py input.jpg output.jpg yaw_deg pitch_deg")
+        exit()
+
+    input_path = sys.argv[1]
+    output_path = sys.argv[2]
+    yaw_deg = float(sys.argv[3])   # 水平方向（左右）
+    pitch_deg = float(sys.argv[4]) # 垂直方向（上下）
 
     img = cv2.imread(input_path)
     if img is None:
         raise FileNotFoundError(f"画像を読み込めません: {input_path}")
 
-    # 例1: 正面方向
-    # eye_vec = (0, 0, 1)
+    # 度 → ラジアン
+    yaw = math.radians(yaw_deg)
+    pitch = math.radians(pitch_deg)
 
-    # 例2: 右方向を向く
-    # eye_vec = (1, 0, 1)
-
-    # 例3: 上方向を向く
-    # y軸は画像下方向が正なので、上を向きたい場合は y を負にする
-    eye_vec = (0, 0, 1)
+    # 視線ベクトル（球座標 → 直交座標）
+    eye_vec = (
+        math.cos(pitch) * math.sin(yaw),
+        -math.sin(pitch),
+        math.cos(pitch) * math.cos(yaw)
+    )
 
     out = equirectangular_to_perspective_by_vector(
         img,
