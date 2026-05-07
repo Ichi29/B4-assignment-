@@ -1,14 +1,13 @@
 #!/bin/bash
 
 # 課題3用スクリプト
-# 水平方向の視線を -180 度から 180 度まで 10 度刻みで変化させ，
-# 課題2で作成した透視投影プログラムを用いて画像を生成する．
+# 水平方向の視線を 0 → 180 → -170 → -10 度の順で変化させ，
+# 並べたときにつながる透視投影画像を生成する．
 
 # 使い方:
-#   chmod +x generate_perspective_views.sh
-#   ./generate_perspective_views.sh 入力画像 [出力ディレクトリ]
+#   bash generate_perspective_views.sh 入力画像 [出力ディレクトリ]
 # 例:
-#   ./generate_perspective_views.sh IMG_20260422_104136_012.jpg output_views
+#   bash generate_perspective_views.sh IMG_20260422_104136_012.jpg output_views
 
 INPUT_IMAGE=$1
 OUTPUT_DIR=${2:-output_views}
@@ -19,14 +18,12 @@ FOV_Y=40
 OUT_W=800
 OUT_H=600
 
-# 引数確認
 if [ -z "$INPUT_IMAGE" ]; then
     echo "入力画像を指定してください"
-    echo "例: ./generate_perspective_views.sh IMG_20260422_104136_012.jpg output_views"
+    echo "例: bash generate_perspective_views.sh IMG_20260422_104136_012.jpg output_views"
     exit 1
 fi
 
-# ファイル存在確認
 if [ ! -f "$INPUT_IMAGE" ]; then
     echo "入力画像が見つかりません: $INPUT_IMAGE"
     exit 1
@@ -34,24 +31,25 @@ fi
 
 if [ ! -f "$PYTHON_FILE" ]; then
     echo "Pythonファイルが見つかりません: $PYTHON_FILE"
-    echo "このスクリプトと assignment_2_3d_vector.py を同じディレクトリに置いてください"
+    echo "このスクリプトと $PYTHON_FILE を同じディレクトリに置いてください"
     exit 1
 fi
 
-# 出力ディレクトリ作成
 if [ ! -d "$OUTPUT_DIR" ]; then
     mkdir -p "$OUTPUT_DIR"
 fi
 
-# -180度から180度まで10度刻みで透視投影画像を生成
-for (( angle=-180; angle<=180; angle+=10 )); do
+generate_image () {
+    angle=$1
+    index=$2
+
     if [ $angle -lt 0 ]; then
-        angle_name="m$((-angle))"
+        angle_label="m$((-angle))"
     else
-        angle_name="p$angle"
+        angle_label="p$angle"
     fi
 
-    OUTPUT_IMAGE="$OUTPUT_DIR/perspective_${angle_name}.jpg"
+    OUTPUT_IMAGE=$(printf "%s/perspective_%03d_%s.jpg" "$OUTPUT_DIR" "$index" "$angle_label")
 
     echo "angle = ${angle} deg -> $OUTPUT_IMAGE"
 
@@ -61,6 +59,7 @@ import math
 import cv2
 
 from assignment_2_3d_vector_forbash import equirectangular_to_perspective_by_vector
+
 input_path = sys.argv[1]
 output_path = sys.argv[2]
 angle_deg = float(sys.argv[3])
@@ -73,10 +72,13 @@ img = cv2.imread(input_path)
 if img is None:
     raise FileNotFoundError(f"画像を読み込めません: {input_path}")
 
-# 水平方向の視線角度 theta を -pi から pi まで変化させる．
-# y方向は変化させず，x-z平面上で視線方向ベクトルを作る．
 theta = math.radians(angle_deg)
-eye_vec = (math.sin(theta), 0.0, math.cos(theta))
+
+eye_vec = (
+    math.sin(theta),
+    0.0,
+    math.cos(theta)
+)
 
 out = equirectangular_to_perspective_by_vector(
     img,
@@ -89,7 +91,18 @@ out = equirectangular_to_perspective_by_vector(
 
 cv2.imwrite(output_path, out)
 PYTHON_CODE
+}
 
+index=0
+
+for (( angle=0; angle<=180; angle+=10 )); do
+    generate_image "$angle" "$index"
+    index=$((index + 1))
+done
+
+for (( angle=-170; angle<0; angle+=10 )); do
+    generate_image "$angle" "$index"
+    index=$((index + 1))
 done
 
 echo "完了しました: $OUTPUT_DIR"
