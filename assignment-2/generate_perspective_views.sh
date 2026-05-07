@@ -60,8 +60,7 @@ import sys
 import math
 import cv2
 
-from assignment_2_3d_vector import equirectangular_to_perspective_by_vector
-
+from assignment_2_3d_vector_forbash import equirectangular_to_perspective_by_vector
 input_path = sys.argv[1]
 output_path = sys.argv[2]
 angle_deg = float(sys.argv[3])
